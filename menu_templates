@@ -1,0 +1,50 @@
+~~~~~~~~~ Welcome to RKMS ATM ~~~~~~~~~~~
+1. Create Account
+2. Delete Account
+3. Deposit Money
+4. Withdraw Money
+5. Edit Profile
+6. Exit
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~ Create Account ~~~~~~~~~~~~~~~
+Enter a username: <user inputs username>
+Enter a password: <user inputs password>
+Confirm password: <user inputs password>
+Your account has been sucessfully created / Incorrect password entered (EXIT)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~ Delete Account ~~~~~~~~~~~~~~~
+Enter a username: <user inputs username>
+Enter a password: <user inputs password>
+Confirm password: <user inputs password>
+Your account has been sucessfully deleted / Incorrect password entered (EXIT)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~ Deposit Money ~~~~~~~~~~~~~~~~~
+Enter a username: <user inputs username>
+Enter a password: <user inputs password>
+Confirm password: <user inputs password>
+Enter amount: <user inputs money amount> / Incorrect password entered (EXIT)
+Successfully added amount
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~ Withdraw Money ~~~~~~~~~~~~~~~~
+Enter a username: <user inputs username>
+Enter a password: <user inputs password>
+Confirm password: <user inputs password>
+Enter amount: <user inputs money amount> / Incorrect password entered (EXIT)
+Successfully withdrawn money / Insufficient funds
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~ Edit Profile ~~~~~~~~~~~~~~
+1. Change Username
+2. Change Password
+3. View Account Information
+3. Exit
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~ Exit ~~~~~~~~~~~~~~~~~~~~~
+Thank you for visiting RKMS ATM
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
