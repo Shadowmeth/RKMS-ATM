@@ -25,8 +25,8 @@ public class main {
     public static void main(String[] args) {
 
         try {
-            File f = new File("accounts.txt");
-            Scanner accounts = new Scanner(f);
+            File fileAccounts = new File("accounts.txt");
+            Scanner accounts = new Scanner(fileAccounts);
 
             while (accounts.hasNextLine()) {
                 // main program code comes here and then other functions are called that do all the processing
@@ -43,13 +43,14 @@ public class main {
                 // accounts are stored the in format username:password#money
                 // Also note that we choose the format ourselves, there is no restriction and we can in fact change it if desired.
                 // But this format to store account information was chosen because it's probably the most simple
-
+                
                 // String account = accounts.nextLine();
                 // System.out.println(parseMoney(account));
             }
 
             accounts.close();
         } catch (FileNotFoundException e) {
+            System.out.println("Error reading file: ");
             e.printStackTrace();
         }
     }
