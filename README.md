@@ -1,5 +1,5 @@
 # RKMS-ATM
-**Probably the dumbest ATM machine ever**
+**Gonna sell this software for trillions**
 
 TODO:
   - Remove file handling stuff from main and add it to other functions.
