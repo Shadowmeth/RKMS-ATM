@@ -29,6 +29,8 @@ public class main {
             Scanner accounts = new Scanner(fileAccounts);
 
             while (accounts.hasNextLine()) {
+                String line = accounts.nextLine(); // line = "Kumail:hyre#5000"
+                System.out.println(parseUsername(line));
                 // main program code comes here and then other functions are called that do all the processing
                 // note that each function should be named according to what it's doing. For example addAccount is a better function name
                 // than add or adda or addacc or acc. Each function should do a little thing and it should do it well. For example
