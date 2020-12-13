@@ -1,9 +1,15 @@
+package com.project;
+
 import java.io.*;
 import java.util.Scanner;
-public class main {
-
+public class Main {
+	
+	private static void DEBUG(String msg) {
+		System.out.println("(DEBUG) " + msg);
+	}
+	
     // extract the username from account line and return it
-    private static String parseUsername(String account) {
+    private static String parseUserName(String account) {
         int colonIndex = account.indexOf(':');
         return account.substring(0, colonIndex);
     }
@@ -21,38 +27,87 @@ public class main {
         String money = account.substring(hashIndex + 1);
         return Integer.parseInt(money);
     }
+    
+    private static int getMainMenuOption() { // Function takes an integer in range 1-6 and returns it
+    	Scanner input = new Scanner(System.in);
+    	int option;
+    	do { // Input validation  for main menu
+    		System.out.print("Enter option: ");
+    		option = input.nextInt();
+    		if (option <= 0 || option >= 7) {
+    			System.out.println("Invalid option entered");
+    		}
+    	} while (option <= 0 || option >= 7);
+    	return option;
+    }
+    
+    private static void mainMenu() {
+    	System.out.println("~~~~~~~~~ Welcome to RKMS ATM ~~~~~~~~~~~");
+    	System.out.println("1. Create Account");
+    	System.out.println("2. Delete Account");
+    	System.out.println("3. Deposit Money");
+    	System.out.println("4. Withdraw Money");
+    	System.out.println("5. Edit Profile");
+    	System.out.println("6. Exit");
+    	System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+    }
 
-    public static void main(String[] args) {
+    private static void createAccount(String fileName) throws IOException {
+    	PrintWriter file = new PrintWriter(new BufferedWriter(new FileWriter(fileName, true)));
+    	Scanner input = new Scanner(System.in);
+    	String userName = input.nextLine();
+    	String userPassword = input.nextLine();
+    	int money = input.nextInt();
+    	file.println(userName + ":" + userPassword + "#" + String.valueOf(money));
+    	input.close();
+    	file.close();
+    }
+    
+    public static void main(String[] args) throws IOException {
 
         try {
             File fileAccounts = new File("accounts.txt");
             Scanner accounts = new Scanner(fileAccounts);
-
-            while (accounts.hasNextLine()) {
-                String line = accounts.nextLine(); // line = "Kumail:hyre#5000"
-                System.out.println(parseUsername(line));
-                // main program code comes here and then other functions are called that do all the processing
-                // note that each function should be named according to what it's doing. For example addAccount is a better function name
-                // than add or adda or addacc or acc. Each function should do a little thing and it should do it well. For example
-                // parseMoney should only and ONLY extract the money in amount and return it. It shouldn't display the money, or call
-                // any other function such as deposit or withdraw that modifies the money. Also each function should be properly
-                // comments. The comments should describe what, rather than how as given above.
-
-                // Even the menu displays should be turned into functions. So for example to display the main menu you would call
-                // mainMenu();
-
-                // We are using files to store account information. Each line in the file represents an account
-                // accounts are stored the in format username:password#money
-                // Also note that we choose the format ourselves, there is no restriction and we can in fact change it if desired.
-                // But this format to store account information was chosen because it's probably the most simple
-                
-                // String account = accounts.nextLine();
-                // System.out.println(parseMoney(account));
+            
+            // Main Processing Here 
+            mainMenu();
+            int mainMenuOption = getMainMenuOption();
+            
+            switch (mainMenuOption) {
+            case 1:
+            	createAccount("accounts.txt");
+            	break;
+            //case 2:
+            	//deleteAccount();
+            	//break;
+            //case 3:
+            	//depositMoney();
+            	//break;
+            //case 4:
+            	//withdrawMoney();
+            	//break;
+            //case 5:
+            	//editProfile();
+            	//break;
+            //case 6:
+            	//exit();
+            	//break;
+            default: {
+            		DEBUG("This should never be reached");
+            	}
+            
             }
+            
 
+            
+            
+            
+            DEBUG("PROGRAM FINISHED EXECUTING");
+            
+            // Close accounts after doing all the processing with it
             accounts.close();
         } catch (FileNotFoundException e) {
-            System.out.println("Error reading file: ");
+            System.out.println("Error reading file: Try checking the file for existence or permissions");
             e.printStackTrace();
         }
     }
