@@ -4,7 +4,8 @@
 3. Deposit Money
 4. Withdraw Money
 5. Edit Profile
-6. Exit
+6. Transfer Funds
+7. Exit
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~ Create Account ~~~~~~~~~~~~~~~
@@ -43,6 +44,16 @@ Successfully withdrawn money / Insufficient funds
 3. View Account Information
 3. Exit
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~ Transfer Funds ~~~~~~~~~~~~~~~
+Enter a username: <user inputs username>
+Enter a password: <user inputs password>
+Confirm password: <user inputs password>
+Enter recipient username: <user inputs username>
+Confirm recipient username: <user inputs username>
+Enter amount: <user inputs amount> / Print appropriate msgs
+Successfully transfered funds
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~ Exit ~~~~~~~~~~~~~~~~~~~~~
 Thank you for visiting RKMS ATM
