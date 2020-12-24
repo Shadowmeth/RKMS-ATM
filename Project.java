@@ -3,6 +3,9 @@ import java.util.stream.Collectors;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Project {
 	private static String fileName = "accounts.txt";
@@ -159,18 +162,96 @@ public class Project {
 		int money = getMoney();
 		String account = constructAccount(userName, password, money);
 		appendAccount(account);
-
-		System.out.println("Your account has been created sucessfully");
+		
 		return true;
 	}
-
+	
+	private static boolean matchUserNameAndPassword(String userName, String password) {
+		for (int i = 0; i < accounts.length; i++) {
+			if (parseUserName(accounts[i]).equals(userName)) {
+				if (parsePassword(accounts[i]).equals(password)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	private static int getInitialMoney(String userName) {
+		for (int i = 0; i < accounts.length; i++) { // traverse the accounts array
+			if (parseUserName(accounts[i]).equals(userName)) {
+				return parseMoney(accounts[i]); // return the money for userName
+			}
+		}
+		return -1;
+	}
+	
+	private static int inputMoney() {
+		int money;
+		Scanner input = new Scanner(System.in);
+		do {
+			System.out.print("Enter amount to deposit: ");
+			money = input.nextInt();
+			if (money < 0) {
+				System.out.println("Invalid value entered");
+			}
+		} while(money < 0);
+		input.close();
+		return money;
+	}
+	
+	private static int getAccountIndex(String userName) {
+		for (int i = 0; i < accounts.length; i++) {
+				if (parseUserName(accounts[i]).equals(userName)) {
+					return i;
+				}
+		}
+		return -1; // THIS SHOULD NEVER BE EXECUTED: IF THE FUNCTION IS RETURNING -1 THEN THERE'S AN ERROR
+	}
+	
+	private static boolean depositMoney() throws IOException {
+		String userName = getUserName();
+		if (!userExists(userName)) {
+			return false; // there is no such user, we can't deposit money
+		}
+		
+		String password = getPassword();
+		if (!matchUserNameAndPassword(userName, password)) {
+			return false; // username and password weren't matched
+		}
+		
+		int initialMoney = getInitialMoney(userName);
+		// instead of deleting and creating elements in the accounts array
+		// what if the changed the array element in-place
+		int addMoney = inputMoney();
+		accounts[getAccountIndex(userName)] = constructAccount(userName, password, initialMoney + addMoney);
+		writeFile(accounts);
+		
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd             HH:mm:ss");  
+		LocalDateTime now = LocalDateTime.now();  
+		System.out.println("------------------------------------------");
+		System.out.println(dtf.format(now));
+		System.out.println("\t\tRKMS ATM");
+		System.out.println("Account User Name: " + userName);
+		System.out.println("Initial Money\t\t" + "$" + initialMoney);
+		System.out.println("Money deposited\t\t" + "$" + addMoney);
+		System.out.println("________________________________");
+		System.out.println("Total Money\t\t" + "$" + (initialMoney + addMoney));
+		System.out.println("-------------------------------------------");
+		
+		return true;
+	}
+	
+	
 	public static void main(String[] args) {
 
 		try {
 			readFile(); // VERY FIRST STEP FOR PROGRAM TO WORK
 			// We can do nothing if we don't have an array containing the file for processing
-			if (!createAccount()) {
-				System.out.println("Error creating account: Your account exists already");
+			if (!depositMoney()) {
+				System.out.println("Failed to deposit money for some reason");
+			} else {
+				System.out.println("Deposited money");
 			}
 
 
