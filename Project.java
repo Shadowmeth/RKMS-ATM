@@ -209,7 +209,7 @@ public class Project {
 		return -1; // THIS SHOULD NEVER BE EXECUTED: IF THE FUNCTION IS RETURNING -1 THEN THERE'S AN ERROR
 	}
 	
-	private static boolean depositMoney() throws IOException {
+	private static boolean depositMoney(boolean printBill) throws IOException {
 		String userName = getUserName();
 		if (!userExists(userName)) {
 			return false; // there is no such user, we can't deposit money
@@ -226,34 +226,193 @@ public class Project {
 		int addMoney = inputMoney();
 		accounts[getAccountIndex(userName)] = constructAccount(userName, password, initialMoney + addMoney);
 		writeFile(accounts);
+
+		if (printBill) {
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd             HH:mm:ss");  
+			LocalDateTime now = LocalDateTime.now();  
+			System.out.println("------------------------------------------");
+			System.out.println(dtf.format(now));
+			System.out.println("\t\tRKMS ATM");
+			System.out.println("Account User Name: " + userName);
+			System.out.println("Initial Money\t\t" + "$" + initialMoney);
+			System.out.println("Money deposited\t\t" + "$" + addMoney);
+			System.out.println("________________________________");
+			System.out.println("Total Money\t\t" + "$" + (initialMoney + addMoney));
+			System.out.println("-------------------------------------------");
+		}
+		
+		return true;
+	}
+	
+	private static int enterMoneyToWithdraw(int initialMoney) {
+		Scanner input = new Scanner(System.in);
+		int money = 0;
+		do {
+			System.out.println("Enter amount you want to withdraw: ");
+			money = input.nextInt();
+			if(money > initialMoney) {
+				System.out.println("The amount you have entered is greater than the amount in your account");
+			} else if (money < 0) {
+				System.out.println("You entered negative amount");
+			}
+		}while(money > initialMoney || money < 0);
+		
+		return money;
+	}
+	
+	private static int getWithdrawAmount(int initialMoney) {
+		Scanner input = new Scanner(System.in);
+		int option;
+		
+		do { 
+			System.out.println("1. 1000");
+			System.out.println("2. 5000");
+			System.out.println("3. 10000");
+			System.out.println("4. 25000");
+			System.out.println("5. 50000");
+			System.out.println("6. Other");
+			System.out.println("7. Cancel");
+			System.out.print("Enter the option: ");
+			option = input.nextInt();
+			switch (option) {
+			case 1:
+				return 1000;
+			case 2:
+				return 5000;
+			case 3:
+				return 10000;
+			case 4:
+				return 25000;
+			case 5:
+				return 50000;
+			case 6:
+				return enterMoneyToWithdraw(initialMoney);
+			case 7:
+				return -1;
+			default:
+				System.out.println("Invalid Option Entered");
+				continue;
+			}
+				
+		} while(option < 1 || option > 7);
+		input.close();
+		return -2; // this should never be returned
+	}
+
+	private static boolean withDrawMoney(boolean printBill) throws IOException {
+		String userName = getUserName();
+		if (!userExists(userName)) {
+			return false; // there is no such user, we can't withdraw money
+		}
+		
+		String password = getPassword();
+		if (!matchUserNameAndPassword(userName, password)) {
+			System.out.println("Incorrect username/password entered!");
+			return false; // username and password weren't matched
+		}
+		
+		int initialMoney = getInitialMoney(userName);
+		int deleteMoney = getWithdrawAmount(initialMoney);
+		if (deleteMoney == -1) {
+			return false;
+		}
+		if (deleteMoney > initialMoney) {
+			System.out.println("Insufficient funds in account: " + userName);
+			return false;
+		}
+		
+		accounts[getAccountIndex(userName)] = constructAccount(userName, password, initialMoney - deleteMoney);
+		writeFile(accounts);
+		
+		if (printBill) {
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd             HH:mm:ss");  
+			LocalDateTime now = LocalDateTime.now();  
+			System.out.println("------------------------------------------");
+			System.out.println(dtf.format(now));
+			System.out.println("\t\tRKMS ATM");
+			System.out.println("Account User Name: " + userName);
+			System.out.println("Initial Money\t\t" + "$" + initialMoney);
+			System.out.println("Money withdrawn\t\t" + "$" + deleteMoney);
+			System.out.println("________________________________");
+			System.out.println("Total Money\t\t" + "$" + (initialMoney - deleteMoney));
+			System.out.println("-------------------------------------------");
+		}
+		
+		return true;
+	}
+
+	private static boolean transferFunds() throws IOException {
+		String userName = getUserName();
+		
+		if (!userExists(userName)) {
+			System.out.println("Account username: \"" + userName + "\" doesn't exists");
+			return false;
+		}
+		
+		String password = getPassword();
+		if (!matchUserNameAndPassword(userName, password)) {
+			System.out.println("Incorrect sender username/password entered!");
+			return false; // username and password weren't matched
+		}
+		
+		System.out.println("Enter reciever info");
+		String recieverUserName = getUserName();
+		System.out.println("Enter reciever username again for validation");
+		String confirmedUserName = getUserName();
+		
+		if (!recieverUserName.equals(confirmedUserName)) {
+			System.out.println("Usernames didn't match");
+			return false;
+		}
+		
+		if (!userExists(recieverUserName)) {
+			System.out.println("Account username: \"" + recieverUserName + "\" doesn't exists");
+			return false;
+		}
+		
+		int initialMoney = parseMoney(accounts[getAccountIndex(userName)]);
+		int deleteMoney = getWithdrawAmount(initialMoney);
+		
+		if (deleteMoney == -1) {
+			System.out.println("Cancelling transfer funds");
+			return false;
+		}
+		
+		if (deleteMoney > initialMoney) {
+			System.out.println(userName + " doesn't have sufficient funds for transfer");
+			return false;
+		} 
+		
+		accounts[getAccountIndex(userName)] = constructAccount(userName, password, initialMoney - deleteMoney);
+		writeFile(accounts);
 		
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd             HH:mm:ss");  
 		LocalDateTime now = LocalDateTime.now();  
 		System.out.println("------------------------------------------");
 		System.out.println(dtf.format(now));
 		System.out.println("\t\tRKMS ATM");
+		System.out.println("\tTransfer Funds");
+		System.out.println("Reciever is: " + recieverUserName);
 		System.out.println("Account User Name: " + userName);
 		System.out.println("Initial Money\t\t" + "$" + initialMoney);
-		System.out.println("Money deposited\t\t" + "$" + addMoney);
+		System.out.println("Money withdrawn\t\t" + "$" + deleteMoney);
 		System.out.println("________________________________");
-		System.out.println("Total Money\t\t" + "$" + (initialMoney + addMoney));
+		System.out.println("Total Money\t\t" + "$" + (initialMoney - deleteMoney));
 		System.out.println("-------------------------------------------");
+		
+		String recieverPassword = parsePassword(accounts[getAccountIndex(recieverUserName)]);
+		accounts[getAccountIndex(recieverUserName)] = constructAccount(recieverUserName, recieverPassword, initialMoney + deleteMoney);
+		writeFile(accounts);
 		
 		return true;
 	}
-	
-	
+
 	public static void main(String[] args) {
 
 		try {
 			readFile(); // VERY FIRST STEP FOR PROGRAM TO WORK
 			// We can do nothing if we don't have an array containing the file for processing
-			if (!depositMoney()) {
-				System.out.println("Failed to deposit money for some reason");
-			} else {
-				System.out.println("Deposited money");
-			}
-
+			
 
 		} catch (Exception e) {
 			System.out.println("Error doing IO processing");
