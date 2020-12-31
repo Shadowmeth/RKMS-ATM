@@ -10,8 +10,9 @@ import java.time.format.DateTimeFormatter;
 public class Project {
 	private static String fileName = "accounts.txt";
 	private	static String[] accounts;
-	
+
 	// extract the username from account line and return it
+	// PARSEUSERNAME
     private static String parseUserName(String account) {
     	// saba:thedumbestdumbo#21516
         int colonIndex = account.indexOf(':');
@@ -19,6 +20,7 @@ public class Project {
     }
 
     // extract the password from account line and return it
+    // PARSEPASSWORD
     private static String parsePassword(String account) {
         int colonIndex = account.indexOf(':');
         int hashIndex = account.indexOf('#');
@@ -26,6 +28,7 @@ public class Project {
     }
 
     // extract the money from account line and return it
+    // PARSEMONEY
     private static int parseMoney(String account) {
         int hashIndex = account.indexOf('#');
         String money = account.substring(hashIndex + 1);
@@ -33,6 +36,7 @@ public class Project {
     }
 
     // get number of accounts
+    // GETACCOUNTCOUNT
 	private static int getAccountCount() throws FileNotFoundException { 
 		File file = new File(fileName);
 		Scanner acc = new Scanner(file);
@@ -45,6 +49,7 @@ public class Project {
 		return count;
 	}
 
+	// DELETEARRAYELEMENT
 	private static String[] deleteArrayElement(String[] arr, String ele) {
 		String[] temp = new String[arr.length - 1];
 		for (int j = 0, i = 0; i < temp.length;) {
@@ -57,17 +62,20 @@ public class Project {
 		return temp;
 	}
 
+	// REMOVEACCOUNT
 	private static void removeAccount(String account) throws IOException {
 		accounts = deleteArrayElement(accounts, account);
 		writeFile(accounts);
 	}
 
+	// APPENDACCOUNT
 	private static void appendAccount(String account) throws IOException {
 		accounts = addArrayElement(accounts, account);
 		writeFile(accounts);
 	}
 
 	// old contents are overwritten by contents of array accounts
+	// WRITEFILE
 	private static void writeFile(String[] accounts) throws IOException {
 		PrintWriter file = new PrintWriter(new BufferedWriter(new FileWriter(fileName)));
 		for (int i = 0; i < accounts.length; i++) {
@@ -77,6 +85,7 @@ public class Project {
 	}
 
 	// read contents of file in accounts
+	// READFILE
 	private static void readFile() throws FileNotFoundException {
 		accounts = new String[getAccountCount()];
 		File file = new File(fileName);
@@ -88,6 +97,7 @@ public class Project {
 		acc.close();
 	}
 
+	// GETUSERNAME
 	private static String getUserName() {
 		Scanner input = new Scanner(System.in);
 		String userName;
@@ -101,33 +111,44 @@ public class Project {
 		return userName;
 	}
 
+	// GETPASSWORD
 	private static String getPassword() {
 		Scanner input = new Scanner(System.in);
 		String password;
 		do {
 			System.out.print("Enter password: ");
 			password = input.nextLine();
-			if (password.length() < 3) {
-				System.out.println("Invalid Password entered.");
+			if (password.length() < 3 || password.indexOf('#') != -1) { // password can't contain # otherwise the file format
+				System.out.println("Invalid Password entered."); // breaks
 			}
-		} while (password.length() < 3);
+		} while (password.length() < 3 || password.indexOf('#') != -1);
 		return password;
 	}
 
+	// GETMONEY
 	private static int getMoney() {
 		Scanner input = new Scanner(System.in);
-		int money;
+		int money = 0;
+		
 		do {
 			System.out.print("Enter money: ");
-			money = input.nextInt();
+			try {
+				money = input.nextInt();				
+			} catch (Exception e) {
+				System.out.println("Type mismatch occured");
+				input.nextLine(); // this will clear the input buffer
+				continue;
+			}
 			if (money < 10000) {
 				System.out.println("Minimum 10k initial deposit is required.");
 			}
 		} while (money < 10000);
+		
 		return money;
 	}
 
 	// returns true if the user exists in the file already
+	// USEREXISTS
 	private static boolean userExists(String userName) {
 		for (int i = 0; i < accounts.length; i++) {
 			if (parseUserName(accounts[i]).equals(userName)) {
@@ -137,10 +158,12 @@ public class Project {
 		return false;
 	}
 
+	// CONSTRUCTACCOUNT
 	private static String constructAccount(String userName, String password, int money) {
 		return userName + ":" + password + "#" + String.valueOf(money);
 	}
 
+	// ADDARRAYELEMENT
 	private static String[] addArrayElement(String[] arr, String ele) {
 		String[] temp = new String[arr.length + 1];
 		int c = 0;
@@ -152,9 +175,11 @@ public class Project {
 	}
 
 	// takes inputs, create an account, updates the file
+	// CREATEACCOUNT
 	private static boolean createAccount() throws IOException {
 		String userName = getUserName();
-		if (userExists(userName)) { 
+		if (userExists(userName)) { // can't create duplicate user
+			System.out.println("User already exists");
 			return false;
 		}
 
@@ -162,10 +187,11 @@ public class Project {
 		int money = getMoney();
 		String account = constructAccount(userName, password, money);
 		appendAccount(account);
-		
+		System.out.println("Account created successfully");
 		return true;
 	}
 	
+	// MATCHUSERNAMEANDPASSWORD
 	private static boolean matchUserNameAndPassword(String userName, String password) {
 		for (int i = 0; i < accounts.length; i++) {
 			if (parseUserName(accounts[i]).equals(userName)) {
@@ -177,6 +203,7 @@ public class Project {
 		return false;
 	}
 	
+	// GETINITALMONEY
 	private static int getInitialMoney(String userName) {
 		for (int i = 0; i < accounts.length; i++) { // traverse the accounts array
 			if (parseUserName(accounts[i]).equals(userName)) {
@@ -185,7 +212,8 @@ public class Project {
 		}
 		return -1;
 	}
-	
+
+	// INPUTMONEY
 	private static int inputMoney() {
 		int money;
 		Scanner input = new Scanner(System.in);
@@ -199,7 +227,8 @@ public class Project {
 		input.close();
 		return money;
 	}
-	
+
+	// GETACCOUNTINDEX
 	private static int getAccountIndex(String userName) {
 		for (int i = 0; i < accounts.length; i++) {
 				if (parseUserName(accounts[i]).equals(userName)) {
@@ -209,6 +238,7 @@ public class Project {
 		return -1; // THIS SHOULD NEVER BE EXECUTED: IF THE FUNCTION IS RETURNING -1 THEN THERE'S AN ERROR
 	}
 	
+	// DEPOSITMONEY
 	private static boolean depositMoney(boolean printBill) throws IOException {
 		String userName = getUserName();
 		if (!userExists(userName)) {
@@ -219,7 +249,7 @@ public class Project {
 		if (!matchUserNameAndPassword(userName, password)) {
 			return false; // username and password weren't matched
 		}
-		
+
 		int initialMoney = getInitialMoney(userName);
 		// instead of deleting and creating elements in the accounts array
 		// what if the changed the array element in-place
@@ -244,6 +274,7 @@ public class Project {
 		return true;
 	}
 	
+	// ENTERMONEYTOWITHDRAW
 	private static int enterMoneyToWithdraw(int initialMoney) {
 		Scanner input = new Scanner(System.in);
 		int money = 0;
@@ -256,14 +287,15 @@ public class Project {
 				System.out.println("You entered negative amount");
 			}
 		}while(money > initialMoney || money < 0);
-		
+		input.close();
 		return money;
 	}
 	
+	// GETWITHDRAWAMOUNT
 	private static int getWithdrawAmount(int initialMoney) {
 		Scanner input = new Scanner(System.in);
 		int option;
-		
+
 		do { 
 			System.out.println("1. 1000");
 			System.out.println("2. 5000");
@@ -295,13 +327,16 @@ public class Project {
 			}
 				
 		} while(option < 1 || option > 7);
+		input.nextLine();
 		input.close();
 		return -2; // this should never be returned
 	}
 
+	// WITHDRAWMONEY
 	private static boolean withDrawMoney(boolean printBill) throws IOException {
 		String userName = getUserName();
 		if (!userExists(userName)) {
+			System.out.println("Account username: \"" + userName + "\" doesn't exists");
 			return false; // there is no such user, we can't withdraw money
 		}
 		
@@ -337,10 +372,10 @@ public class Project {
 			System.out.println("Total Money\t\t" + "$" + (initialMoney - deleteMoney));
 			System.out.println("-------------------------------------------");
 		}
-		
 		return true;
 	}
 
+	// TRANSFERFUNDS
 	private static boolean transferFunds() throws IOException {
 		String userName = getUserName();
 		
@@ -406,19 +441,215 @@ public class Project {
 		
 		return true;
 	}
+	
+	// CHANGEUSERNAME
+	private static boolean changeUserName(String userName, String password) throws IOException {
+		String prevUserName = getUserName();
 
+		if (!userName.equals(prevUserName)) {
+			System.out.println("Usernames didn't match");
+			return false;
+		}
+
+		System.out.println("Taking new username");
+		String newUserName = getUserName();
+		System.out.println("Confirming new username");
+		String confirmUserName = getUserName();
+
+		if (!newUserName.equals(confirmUserName)) {
+			System.out.println("Usernames didn't match");
+			return false;
+		}
+
+		int money = getInitialMoney(userName);
+		
+		accounts[getAccountIndex(userName)] = constructAccount(newUserName, password, money);
+		writeFile(accounts);
+
+		System.out.println("Your username has been changed successfully!");
+		return true;
+	}
+
+	// CHANGEPASSWORD
+	public static boolean changePassword(String userName, String password) throws IOException {
+		String prevPassword = getPassword();
+		
+		if (!password.equals(prevPassword)) {
+			System.out.println("Passwords didn't match");
+			return false;
+		}
+
+		System.out.println("Taking new password");
+		String newPassword = getPassword();
+		System.out.println("Confirming new password");
+		String confirmPassword = getPassword();
+
+		if (!newPassword.equals(confirmPassword)) {
+			System.out.println("Passwords didn't match");
+			return false;
+		}
+
+		int money = getInitialMoney(userName);
+		
+		accounts[getAccountIndex(userName)] = constructAccount(userName, newPassword, money);
+		writeFile(accounts);
+		
+		System.out.println("Your password has been changed successfully!");
+
+		return true;
+	}
+	
+	// ACCOUNTINFO
+	private static void accountInfo(String userName, String password) {
+		int money = getInitialMoney(userName);
+
+		System.out.println("Username: " + userName);
+		System.out.println("Password: " + password);
+		System.out.println("Balance: " + money);
+	}
+	
+	// EDITPROFILE
+	private static boolean editProfile() throws IOException {
+		Scanner input = new Scanner(System.in);
+		String userName = getUserName();
+
+		if (!userExists(userName)) {
+			System.out.println("Account username: \"" + userName + "\" doesn't exists");
+			input.close();
+			return false;
+		}
+
+		String password = getPassword();
+		if (!matchUserNameAndPassword(userName, password)) {
+			System.out.println("Incorrect username/password entered!");
+			input.close();
+			return false; 
+		}
+
+		int option;
+		do {
+			System.out.println("1. Change Username");
+			System.out.println("2. Change Password");
+			System.out.println("3. View Account Information");
+			System.out.println("4. Exit");
+			System.out.print("Enter the option: ");
+			option = input.nextInt();
+			switch (option) {
+			case 1:
+				changeUserName(userName, password);
+				break;
+			case 2:
+				changePassword(userName, password);
+				break;
+			case 3:
+				accountInfo(userName, password);
+				break;
+			case 4:
+				break;
+			default:
+				System.out.println("Invalid Option Entered");
+				continue;
+			}
+		} while(option < 1 || option > 4);
+		return true;
+	}
+	
+	// DELETEACCOUNT
+	private static boolean deleteAccount() throws IOException {
+		String userName = getUserName();
+		
+		if (!userExists(userName)) {
+
+			System.out.println("Username doesn't exists");
+			return false;
+		}
+		
+		String userPassword = getPassword();
+		
+		if (!matchUserNameAndPassword(userName, userPassword)) {
+			System.out.println("Failed deleting account. Username and password didn't match");
+			
+			return false;
+		}
+		
+		int money = getInitialMoney(userName);
+		String account = constructAccount(userName, userPassword, money);
+		removeAccount(account);
+		System.out.println("Account deleted successfully");
+		
+		return true;
+	}
+
+	// MAIN
 	public static void main(String[] args) {
-
+		
+		Scanner input = new Scanner(System.in);
 		try {
 			readFile(); // VERY FIRST STEP FOR PROGRAM TO WORK
-			// We can do nothing if we don't have an array containing the file for processing
-			
+			// We can do nothing if we don't have an array containing the accounts for processing
+			int option;
+			do {
+				System.out.println("\n--------- Welcome to RKMS ATM ----------");
+				System.out.println("1. Create Account");
+				System.out.println("2. Delete Account");
+				System.out.println("3. Deposit Money");
+				System.out.println("4. Withdraw Money");
+				System.out.println("5. Edit Profile");
+				System.out.println("6. Transfer Funds");
+				System.out.println("7. Exit");
+				System.out.println("----------------------------------------");
+				System.out.print("Enter your choice: ");
+				option = input.nextInt();
+				switch (option) {
+				case 1: {
+					createAccount();
+					continue;
+				}
+				case 2: {
+					deleteAccount();
+					continue;
+				}
+				case 3: {
+					depositMoney(true);
+					continue;
+				}
+				case 4: {
+					withDrawMoney(true);
+					continue;
+				}
+				case 5: {
+					editProfile();
+					continue;
+				}
+				case 6: {
+					transferFunds();
+					continue;
+				}
+				case 7: {
+					// do nothing, we'll break the main loop
+					break;
+				}
+				default: {
+					System.out.println("Invalid option entered");
+					break;
+				}
+				}
 
+				if (option == 7) {
+					break;
+				}
+				
+			} while(true);
+
+			System.out.println("--- Thank you for visiting RKMS ATM ----");
+		} catch (FileNotFoundException fNotFound) {
+			System.out.println("Error: File not found");
+			fNotFound.printStackTrace();
 		} catch (Exception e) {
-			System.out.println("Error doing IO processing");
+			System.out.println("Error occurred");
 			e.printStackTrace();
 		}
 
+		input.close();
 	}
-
 }
