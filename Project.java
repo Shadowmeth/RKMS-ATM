@@ -133,7 +133,8 @@ public class Project {
 		do {
 			System.out.print("Enter money: ");
 			try {
-				money = input.nextInt();				
+				money = input.nextInt();
+				input.nextLine(); // clear input buffer
 			} catch (Exception e) {
 				System.out.println("Type mismatch occured");
 				input.nextLine(); // this will clear the input buffer
@@ -143,7 +144,6 @@ public class Project {
 				System.out.println("Minimum 10k initial deposit is required.");
 			}
 		} while (money < 10000);
-		
 		return money;
 	}
 
@@ -220,11 +220,11 @@ public class Project {
 		do {
 			System.out.print("Enter amount to deposit: ");
 			money = input.nextInt();
+			input.nextLine(); // clear input buffer
 			if (money < 0) {
 				System.out.println("Invalid value entered");
 			}
 		} while(money < 0);
-		input.close();
 		return money;
 	}
 
@@ -242,11 +242,13 @@ public class Project {
 	private static boolean depositMoney(boolean printBill) throws IOException {
 		String userName = getUserName();
 		if (!userExists(userName)) {
+			System.out.println("Account username: \"" + userName + "\" doesn't exists");
 			return false; // there is no such user, we can't deposit money
 		}
 		
 		String password = getPassword();
 		if (!matchUserNameAndPassword(userName, password)) {
+			System.out.println("Incorrect username/password entered!");
 			return false; // username and password weren't matched
 		}
 
@@ -265,7 +267,7 @@ public class Project {
 			System.out.println("\t\tRKMS ATM");
 			System.out.println("Account User Name: " + userName);
 			System.out.println("Initial Money\t\t" + "$" + initialMoney);
-			System.out.println("Money deposited\t\t" + "$" + addMoney);
+			System.out.println("Money deposited\t\t" + "$" + addMoney + "+");
 			System.out.println("________________________________");
 			System.out.println("Total Money\t\t" + "$" + (initialMoney + addMoney));
 			System.out.println("-------------------------------------------");
@@ -281,13 +283,13 @@ public class Project {
 		do {
 			System.out.println("Enter amount you want to withdraw: ");
 			money = input.nextInt();
+			input.nextLine(); // clear input buffer
 			if(money > initialMoney) {
 				System.out.println("The amount you have entered is greater than the amount in your account");
 			} else if (money < 0) {
 				System.out.println("You entered negative amount");
 			}
 		}while(money > initialMoney || money < 0);
-		input.close();
 		return money;
 	}
 	
@@ -296,7 +298,7 @@ public class Project {
 		Scanner input = new Scanner(System.in);
 		int option;
 
-		do { 
+		do {
 			System.out.println("1. 1000");
 			System.out.println("2. 5000");
 			System.out.println("3. 10000");
@@ -306,6 +308,7 @@ public class Project {
 			System.out.println("7. Cancel");
 			System.out.print("Enter the option: ");
 			option = input.nextInt();
+			input.nextLine(); // clear input buffer
 			switch (option) {
 			case 1:
 				return 1000;
@@ -327,7 +330,6 @@ public class Project {
 			}
 				
 		} while(option < 1 || option > 7);
-		input.nextLine();
 		input.close();
 		return -2; // this should never be returned
 	}
@@ -367,7 +369,7 @@ public class Project {
 			System.out.println("\t\tRKMS ATM");
 			System.out.println("Account User Name: " + userName);
 			System.out.println("Initial Money\t\t" + "$" + initialMoney);
-			System.out.println("Money withdrawn\t\t" + "$" + deleteMoney);
+			System.out.println("Money withdrawn\t\t" + "$" + deleteMoney + "-");
 			System.out.println("________________________________");
 			System.out.println("Total Money\t\t" + "$" + (initialMoney - deleteMoney));
 			System.out.println("-------------------------------------------");
@@ -600,6 +602,7 @@ public class Project {
 				System.out.println("----------------------------------------");
 				System.out.print("Enter your choice: ");
 				option = input.nextInt();
+				input.nextLine(); // clear input buffer
 				switch (option) {
 				case 1: {
 					createAccount();
@@ -638,7 +641,7 @@ public class Project {
 				if (option == 7) {
 					break;
 				}
-				
+
 			} while(true);
 
 			System.out.println("--- Thank you for visiting RKMS ATM ----");
