@@ -447,7 +447,7 @@ public class Project {
 	// CHANGEUSERNAME
 	private static boolean changeUserName(String userName, String password) throws IOException {
 		String prevUserName = getUserName();
-
+		
 		if (!userName.equals(prevUserName)) {
 			System.out.println("Usernames didn't match");
 			return false;
@@ -458,6 +458,11 @@ public class Project {
 		System.out.println("Confirming new username");
 		String confirmUserName = getUserName();
 
+		if (!userExists(userName)) {
+			System.out.println("Username already exists, can't have duplicate users");
+			return false;
+		}
+		
 		if (!newUserName.equals(confirmUserName)) {
 			System.out.println("Usernames didn't match");
 			return false;
@@ -517,14 +522,12 @@ public class Project {
 
 		if (!userExists(userName)) {
 			System.out.println("Account username: \"" + userName + "\" doesn't exists");
-			input.close();
 			return false;
 		}
 
 		String password = getPassword();
 		if (!matchUserNameAndPassword(userName, password)) {
 			System.out.println("Incorrect username/password entered!");
-			input.close();
 			return false; 
 		}
 
@@ -536,6 +539,7 @@ public class Project {
 			System.out.println("4. Exit");
 			System.out.print("Enter the option: ");
 			option = input.nextInt();
+			input.nextLine(); // clear input buffer
 			switch (option) {
 			case 1:
 				changeUserName(userName, password);
