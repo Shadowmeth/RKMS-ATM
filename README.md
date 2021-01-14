@@ -1,6 +1,5 @@
 # RKMS-ATM
 **Gonna sell this software for trillions**
 
-TODO:
-  - Remove file handling stuff from main and add it to other functions.
-  - Clean main, main should only call the menu printing functions, everything else must be handled by other functions.
+The project is complete. It's a simple ATM management system using files. A lot of test cases and input validation bugs have been tested
+and fixed but there still may exist a few.
